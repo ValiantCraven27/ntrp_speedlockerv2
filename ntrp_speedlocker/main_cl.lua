@@ -116,7 +116,7 @@ function Menu_RideHeight() -- Ride Height MENU
         align    = 'right',
         elements = {                        
                 {label = 'Ride Level', type = 'slider', value = 0, min = -7, max = 7},
-                {label = 'Wheel Width', type = 'slider', value = 50, min = 25, max = 75},
+                {label = 'Wheel Width', type = 'slider', value = 50, min = 25, max = 100},
           },
       },
       function(data, menu)
