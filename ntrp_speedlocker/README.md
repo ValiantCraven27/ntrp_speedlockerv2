@@ -1,7 +1,15 @@
 # ntrp_speedlocker
+#ESX
 
+start PNotify
+start InteractSound
+start ntrp_speedlocker
+
+Must install these in resources installed and have ESX
+Other resources in zip folder
 
 Locks Speed with an assigned key/ Press again to unlock speed
+New Wheel Width and Ride Height Menu
 
 Config.MenuTitle = 'NTRP Suspension v1.0'
 
@@ -22,6 +30,7 @@ Config.PNotifyTheme = "gta" -- You need to have pNotify
     metroui]]
 
 /cam [on or Off] -- Turn on/off cin cam, also Locks cin cam if you use /can while in cin mode
+
 
 - Intended for use with FiveM 
 - Commercial Use
