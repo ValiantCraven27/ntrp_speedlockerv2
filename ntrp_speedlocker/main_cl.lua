@@ -7,7 +7,7 @@ Citizen.CreateThread(function()
    end   
 end)
 
-SpeedMultiplier, IsInSpeedLock, IsInSuspensionMenu = 2.238, false, false
+SpeedMultiplier, IsInSpeedLock, IsInSuspensionMenu = 2.236936, false, false
 
 TriggerEvent('chat:addSuggestion', '/cam', 'Turn on/off or Lock Cinematic Cam', {
     { name="on or off", help ="on | off" }
