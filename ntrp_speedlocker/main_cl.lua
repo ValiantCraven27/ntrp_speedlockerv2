@@ -122,7 +122,7 @@ function Menu_RideHeight() -- Ride Height MENU
         elements = {                        
                 {label = 'Ride Level', type = 'slider', value = vehicleSuspensionHeight, min = -8, max = 8},
                 {label = 'Wheel Width', type = 'slider', value = vehicleWheelWidth, min = 25, max = 100},
-                {label = 'Wheel Size', type = 'slider', value = vehicleWheelSize, min = 50, max = 100},
+                {label = 'Wheel Size', type = 'slider', value = vehicleWheelSize, min = 50, max = 120},
           },
       },
       function(data, menu)
