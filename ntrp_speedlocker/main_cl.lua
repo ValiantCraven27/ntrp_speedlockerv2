@@ -13,7 +13,9 @@ TriggerEvent('chat:addSuggestion', '/cam', 'Turn on/off or Lock Cinematic Cam', 
     { name="on or off", help ="on | off" }
 })
 
-Citizen.CreateThread(function()
+
+if Config.UseSpeedLock then
+ Citizen.CreateThread(function()
   while true do
       Citizen.Wait(0)
           local ped = GetPlayerPed(-1)
@@ -26,10 +28,11 @@ Citizen.CreateThread(function()
               Menu_SpeedLock()                      
               Citizen.Wait(1)            
              
+    end
    end
   end
- end
-end)
+ end)
+end
 
 Citizen.CreateThread(function()
     while true do
@@ -89,14 +92,13 @@ function Menu_SpeedLock() -- Speedlock Menu
   local vehicleMPH = GetEntitySpeed(vehicleId)
 
 if IsInSpeedLock == true then
-   PlaySoundFrontend(-1, 'NAV', 'HUD_AMMO_SHOP_SOUNDSET', false)
-   
+   PlaySoundFrontend(-1, 'NAV', 'HUD_AMMO_SHOP_SOUNDSET', false)   
    NTRP.Notify(" 🚦 Speedometer Lock : Inactive ", "info", math.random(2000, 2000))
    SetEntityMaxSpeed(GetVehiclePedIsIn(ped, false), 299.9)              
    IsInSpeedLock = false  
 else
    PlaySoundFrontend(-1, 'NAV', 'HUD_AMMO_SHOP_SOUNDSET', false)
-   NTRP.Notify(" 🚦 Speedometer Lock : Estimated "..Round(GetEntitySpeed(vehicleId) * SpeedMultiplier).." MPH", "warning", math.random(2000, 2000))  
+   NTRP.Notify(" 🚦 Speedometer Lock : "..Round(GetEntitySpeed(vehicleId) * SpeedMultiplier).." MPH", "warning", math.random(2000, 2000))  
    SetEntityMaxSpeed(GetVehiclePedIsIn(ped, false), vehicleMPH )     
    IsInSpeedLock = true  
 end 
@@ -107,7 +109,10 @@ function Menu_RideHeight() -- Ride Height MENU
   IsInSuspensionMenu = true 
   local ped = GetPlayerPed(-1)
   local vehicleId = GetVehiclePedIsIn(ped, false) 
-   
+  local vehicleSuspensionHeight = Round(GetVehicleSuspensionHeight(vehicleId))
+  local vehicleWheelSize = Round(GetVehicleWheelSize(vehicleId) * 100)
+  local vehicleWheelWidth = Round(GetVehicleWheelWidth(vehicleId) * 100)
+
   ESX.UI.Menu.CloseAll()
     ESX.UI.Menu.Open(
       'default', GetCurrentResourceName(), 'smenu2',
@@ -115,23 +120,37 @@ function Menu_RideHeight() -- Ride Height MENU
         title    = Config.MenuTitle,
         align    = 'right',
         elements = {                        
-                {label = 'Ride Level', type = 'slider', value = 0, min = -7, max = 7},
-                {label = 'Wheel Width', type = 'slider', value = 50, min = 25, max = 100},
+                {label = 'Ride Level', type = 'slider', value = vehicleSuspensionHeight, min = -7, max = 8},
+                {label = 'Wheel Width', type = 'slider', value = vehicleWheelWidth, min = 25, max = 100},
+                {label = 'Wheel Size', type = 'slider', value = vehicleWheelSize, min = 50, max = 100 },
           },
       },
       function(data, menu)
         PlaySoundFrontend(-1, 'NAV', 'HUD_AMMO_SHOP_SOUNDSET', false)
-        if data.current.label == 'Ride Level' then
-          SetVehicleSuspensionHeight(vehicleId, data.current.value / -100) 
-          NTRP.Notify("🚘 "..data.current.label.." "..data.current.value.."", "gray", math.random(2000, 2000))  
-         end
+         if data.current.label == 'Ride Level' then
+            SetVehicleSuspensionHeight(vehicleId, data.current.value / -100) 
+            NTRP.Notify("🚘 "..data.current.label.." "..data.current.value.."", "gray", math.random(2000, 2000))  
+          end
          if data.current.label == 'Wheel Width' then
-          --SetVehicleWheelSize(vehicleId,data.current.value)
-          SetVehicleWheelWidth(vehicleId,data.current.value / 100)
-
-          NTRP.Notify("🚘 "..data.current.label.." "..data.current.value.."", "gray", math.random(2000, 2000))  
-         end
-               
+            SetVehicleWheelWidth(vehicleId,data.current.value / 100)
+            SetVehicleWheelTireColliderWidth(vehicleId,0,GetVehicleWheelWidth(vehicleId))  
+            SetVehicleWheelTireColliderWidth(vehicleId,1,GetVehicleWheelWidth(vehicleId))  
+            SetVehicleWheelTireColliderWidth(vehicleId,2,GetVehicleWheelWidth(vehicleId))  
+            SetVehicleWheelTireColliderWidth(vehicleId,3,GetVehicleWheelWidth(vehicleId)) 
+            NTRP.Notify("🚘 "..data.current.label.." "..data.current.value.."", "gray", math.random(2000, 2000))  
+            ResetVehicleWheels(vehicleId,true)
+            SetVehicleOnGroundProperly(vehicleId)
+          end
+         if data.current.label == 'Wheel Size' then            
+            SetVehicleWheelSize(vehicleId,data.current.value / 100)
+           -- SetVehicleWheelTireColliderSize(vehicleId,0,data.current.value / 100)  
+           -- SetVehicleWheelTireColliderSize(vehicleId,1,GetVehicleWheelSize(vehicleId))  
+           -- SetVehicleWheelTireColliderSize(vehicleId,2,GetVehicleWheelSize(vehicleId))  
+            --SetVehicleWheelTireColliderSize(vehicleId,3,GetVehicleWheelSize(vehicleId))         
+            ResetVehicleWheels(vehicleId,true)
+            SetVehicleOnGroundProperly(vehicleId)
+            NTRP.Notify("🚘 "..data.current.label.." "..data.current.value.."", "gray", math.random(2000, 2000))  
+          end      
         IsInSuspensionMenu = false 
         menu.close()
       end,
@@ -143,7 +162,7 @@ function Menu_RideHeight() -- Ride Height MENU
 end
 
 if Config.fuelWarning then
-  Citizen.CreateThread(function() -- Driver Ped no Drive By
+  Citizen.CreateThread(function() 
    while true do 
     Citizen.Wait(Config.fuelTimer)
        local ped = GetPlayerPed(-1)
@@ -158,8 +177,7 @@ if Config.fuelWarning then
        if fuelLevel < Config.fuelPercent and IsInVehicle and driverPed == ped and not IsOnBike then
            NTRP.Notify("Low Fuel : ⛽ "..roundFuel.." %", "warning", math.random(3000, 3000))           
            if Config.Chime then
-            local volume = 0.3
-            TriggerServerEvent('InteractSound_SV:PlayOnSource', 'notbad', volume)
+            TriggerServerEvent('InteractSound_SV:PlayOnSource', 'chime', Config.Volume)
            end 
         end
     end
