@@ -37,7 +37,7 @@ Config.PNotifyTheme = "gta" -- You need to have pNotify
     relax
     metroui]]
 
-/cam [on or Off] -- Turn on/off cin cam, also Locks cin cam if you use /can while in cin mode
+/cam [on or Off] -- Turn on/off cin cam, also Locks cin cam if you use /cam while in cin mode
 
 
 - Intended for use with FiveM 
