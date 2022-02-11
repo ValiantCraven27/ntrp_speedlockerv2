@@ -1,7 +1,7 @@
 # ntrp_speedlocker v2.1
 #ESX
 
-start PNotify
+start pNotify
 start InteractSound
 start ntrp_speedlocker
 
