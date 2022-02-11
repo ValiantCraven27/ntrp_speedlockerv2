@@ -1,6 +1,6 @@
 Config = {}
 
-Config.MenuTitle = 'NTRP Suspension v1.0'
+Config.MenuTitle = 'NTRP Suspension v1.1'
 
 Config.UseSpeedLock = true
 Config.SpeedKey = 68    --LB or Right Mouse Click | https://docs.fivem.net/docs/game-references/controls/
